@@ -11,6 +11,10 @@ void swap(int *a, int *b);
 int partition(int* data, int low, int high);
 void quickSort(int* data, int low, int high);
 
+/* for merge sort */
+void merge(int *data, int low, int mid, int high);
+void mergeSort(int *data, int low, int high);
+
 
 #endif
 
