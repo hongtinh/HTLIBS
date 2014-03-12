@@ -15,6 +15,10 @@ void quickSort(int* data, int low, int high);
 void merge(int *data, int low, int mid, int high);
 void mergeSort(int *data, int low, int high);
 
+/* for heap sort */
+void heapSort(int *data, int size);
+void buildMaxHeap(int *data, int size);
+void maxHeapify(int *data, int i, int size);
 
 #endif
 
