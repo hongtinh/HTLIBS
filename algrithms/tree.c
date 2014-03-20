@@ -1,90 +1,122 @@
 #include "tree.h"
 
-int get_tree_level(node_t* root)
+int get_tree_height(node_t* node)
 {
-  if(!root) return 0;
+  if(!node) return 0;
   int lnode_cnt = 0, rnode_cnt = 0;
 
-  lnode_cnt = get_tree_level(root->left);
-  rnode_cnt = get_tree_level(root->right);
+  lnode_cnt = get_tree_height(node->left);
+  rnode_cnt = get_tree_height(node->right);
   return (lnode_cnt > rnode_cnt) ? (lnode_cnt + 1):(rnode_cnt + 1);
 }
 
-
-/* for print tree */
-void init_print_buf(char* buf, int size)
+void preOrderWalk(node_t* node)
 {
-  memset(buf, ' ', size* sizeof(char));
-}
-void print_node_to_buf(node_t* root, int x, int y, char* buf, int height)
-{
-  if(!root) return;
-  sprintf( buf + (y*height*2 + x)*TREE_PRINT_SPACE , "%d", root->value );
-  sprintf( buf + (y*height + x - 1 )*TREE_PRINT_SPACE, "%s", "/");
-  sprintf( buf + (y*height + x + 1 )*TREE_PRINT_SPACE, "%s", "\\");
-  print_node_to_buf(root->left, x - 1 , y + 2, buf, height);
-  print_node_to_buf(root->right, x + 1 , y + 2, buf, height);
+  if(!node) return;
+  printf("%d(p=%d) ", node->data, (NULL == node->parent) ? 0xffff: node->parent->data);
+  preOrderWalk(node->left);
+  preOrderWalk(node->right);
 }
 
-void print_tree(node_t* root)
+node_t* BST_insert_data(node_t* node, int data)
 {
-  if(!root) {
-    printf("tree is empty \n");
-    return;
-  }
-  int root_x, root_y;
-  int i,j;
-  int height = get_tree_level(root);
-  printf("tree height is %d \n", height);
-  char* print_buf = (char*)malloc(sizeof(char) * (height)*(height*2));
-  init_print_buf(print_buf, height*height*2);
-  root_x = height; 
-  root_y = 0;
-  print_node_to_buf(root, root_x, root_y, print_buf, height);
-  for( i = 0; i < height*height*2*TREE_PRINT_SPACE; ++i){
-    printf("%s", print_buf + i);
-    if( 0 == i%height ) printf("\n");
-  }
-}
-
-void BST_insert_value(node_t** root, int value)
-{
-  if(!(*root)){
-    (*root) = (node_t*)malloc(sizeof(node_t));
-    (*root)->left = NULL;
-    (*root)->right = NULL;
-    (*root)->parent = NULL;
-    (*root)->value = value;
-  }else{
-    if( value < (*root)->value ) BST_insert_value(&((*root)->left), value);
-    else BST_insert_value(&((*root)->right), value);
-  }
-}
-
-void preOrderWalk(node_t* root)
-{
-  if(!root) return;
-  printf("%d ", root->value);
-  preOrderWalk(root->left);
-  preOrderWalk(root->right);
-}
-
-#define MAX_SIZE 16 
-
-int main()
-{
-  int i= 0;
-  int data[MAX_SIZE];
-  //node_t* root = (node_t*)malloc(sizeof(node_t));
-  node_t* root = NULL;
-  srand((unsigned)time(NULL));
-  for(i=0; i< MAX_SIZE; i++) 
+  if(!node)
   {
-    data[i] = rand()%MAX_SIZE;
-    BST_insert_value(&root, data[i]);
-    printf("%d ", data[i]);
+    node = (node_t*)malloc(sizeof(node_t));
+    node->parent = NULL;
+    node->left = NULL;
+    node->right = NULL;
+    node->data = data;
   }
-  printf("\n");
-  preOrderWalk(root);
-  //print_tree(root);
+  else
+  {
+    if( data < node->data ) 
+    {
+      node->left = BST_insert_data(node->left, data);
+      node->left->parent = node;
+    }
+    else 
+    {
+      node->right = BST_insert_data(node->right, data);
+      node->right->parent = node;
+    }
+  }
+  return node;
 }
+
+node_t* BST_search_data(node_t* node, int data)
+{
+  if(!node) return NULL;
+  if( data == node->data ) return node;
+  if( data < node->data )
+  {
+    return BST_search_data(node->left, data);
+  }
+  else
+  {
+    return BST_search_data(node->right, data);
+  }
+}
+
+node_t* BST_get_min(node_t* node)
+{
+  if(!node->left) return node;
+  return BST_get_min(node->left);
+}
+
+node_t* BST_get_max(node_t* node)
+{
+  if(!node->right) return node;
+  return BST_get_max(node->right);
+}
+
+void BST_swap_node_data(node_t* node_a, node_t* node_b)
+{
+  int tmp = node_a->data;
+  node_a->data = node_b->data;
+  node_b->data = tmp;
+}
+
+void BST_remove_data(node_t* rm_node)
+{
+  bool left_node = false;
+  left_node = (rm_node->parent->left == rm_node) ? true:false;
+  /* if it is a leaf node */
+  if( (!rm_node->left) && (!rm_node->right) )
+  {
+    if(left_node) rm_node->parent->left = NULL;
+    else rm_node->parent->right = NULL;
+    free(rm_node);
+    rm_node = NULL;
+  }
+  /* if it's left is empty */
+  else if((!rm_node->left) && (rm_node->right))
+  {
+    if(left_node) rm_node->parent->left = rm_node->right;
+    else rm_node->parent->right = rm_node->right;
+    rm_node->right->parent = rm_node->parent;
+    free(rm_node);
+    rm_node = NULL;
+  }
+  /* if it's right is empty */
+  else if((!rm_node->right) && (rm_node->left))
+  {
+    if(left_node) rm_node->parent->left = rm_node->left;
+    else rm_node->parent->right = rm_node->left;
+    rm_node->left->parent = rm_node->parent;
+    free(rm_node);
+    rm_node = NULL;
+  }
+  /* if it has both left and right sub tree */
+  else
+  {
+    node_t* min_node = BST_get_min(rm_node->right);
+    BST_swap_node_data(rm_node, min_node);
+    BST_remove_data(min_node);
+  }
+}
+
+
+
+
+

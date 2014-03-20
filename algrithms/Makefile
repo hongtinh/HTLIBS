@@ -6,6 +6,7 @@ CC = gcc
 CXX = g++
 
 INCLUDES = -I./sort.h \
+           -I./tree.h \
 
 LIBS = 
 
