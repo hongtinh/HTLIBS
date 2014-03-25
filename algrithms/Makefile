@@ -19,5 +19,5 @@ $(TARGET) : $(OBJS)
 	$(CC) -c $< $(CCFLAGS) $(INCLUDES)
 
 clean:
-	rm *.o rm $(TARGET)
+	rm *.o $(TARGET)
 .PHONY:clean

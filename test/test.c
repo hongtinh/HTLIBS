@@ -41,7 +41,7 @@ void tree_test()
     tree = BST_insert_data(tree, data[i]);
   }
   printf("\n");
-  preOrderWalk(tree);
+  pre_order_walk(tree);
   printf("\n");
 
   node_t* node = BST_search_data( tree, 1);
@@ -51,7 +51,7 @@ void tree_test()
   printf("remove: %d ", node->data);
   BST_remove_data(node);
   printf("\n");
-  preOrderWalk(tree);
+  pre_order_walk(tree);
   printf("\n");
 }
 

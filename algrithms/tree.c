@@ -10,12 +10,12 @@ int get_tree_height(node_t* node)
   return (lnode_cnt > rnode_cnt) ? (lnode_cnt + 1):(rnode_cnt + 1);
 }
 
-void preOrderWalk(node_t* node)
+void pre_order_walk(node_t* node)
 {
   if(!node) return;
   printf("%d(p=%d) ", node->data, (NULL == node->parent) ? 0xffff: node->parent->data);
-  preOrderWalk(node->left);
-  preOrderWalk(node->right);
+  pre_order_walk(node->left);
+  pre_order_walk(node->right);
 }
 
 node_t* BST_insert_data(node_t* node, int data)

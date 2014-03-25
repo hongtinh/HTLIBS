@@ -12,7 +12,7 @@ typedef struct node_s{
 
 /* Tree common functions */
 int get_tree_height(node_t* node);
-void preOrderWalk(node_t* node);
+void pre_order_walk(node_t* node);
 
 /* for BST(Binary Seach Tree)) */
 node_t* BST_insert_data(node_t* node, int data);
