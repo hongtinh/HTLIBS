@@ -1,75 +1,109 @@
+#include <stdlib.h>
 #include <string.h>
 #include "sort.h"
+static void swap(int *a, int *b);
+static int partition(int *a, int begin, int end);
+static void merge(int *data, int low, int mid, int high);
+static void buildMaxHeap(int *data, int size);
+static void maxHeapify(int *data, int i, int size);
 
-void swap(int *a, int *b)
+
+static void swap(int *a, int *b)
 {
   int c = *a;
   *a = *b;
   *b = c;
 }
 
-/* for quick sort */
-int partition(int* data, int low, int high)
+static int partition(int *a, int begin, int end)
 {
-  int key = *(data + high);
-  int j=low;
-  int i=0;
-  for(i=low; i< high; ++i)
-  {
-    if( *(data + i) <= key )
-    {
-       swap(data + i, data + j);
-       j++;
-    }
-  }
-  swap(data + j, data + high);
-  return j;
+	int i = begin;
+	int j = end;
+	int key = begin;
+
+	if (i == j) return i;
+
+	while (i < j) {
+
+		if (j > key) {
+			if (a[j] < a[key]) {
+				swap(a + key, a + j);
+				key = j;
+			} else {
+				j--;
+				if (i == j) break;
+			}
+		}
+
+		if (i < key) {
+			if (a[i] > a[key]) {
+				swap(a + i, a + key);
+				key = i;	
+			} else {
+				i++;
+				if (i == j) break;
+			}
+		}
+
+	}
+	return i;
 }
 
 void quickSort(int* data, int low, int high)
 {
+
   int mid;
-  if(low < high)
-  {
+  if (low < high) {
     mid = partition(data, low, high);
-    quickSort(data, low, mid-1);
-    quickSort(data, mid+1, high);
+    quickSort(data, low, mid);
+    quickSort(data, mid + 1, high);
   }  
+  
 }
 
 
-
-/* for merge sort */
-void merge(int *data, int low, int mid, int high)
+static void merge(int *a, int begin, int mid, int end)
 {
-  int i, j, k;
-  int *pTmp = (int*)malloc( sizeof(int) * (high - low + 1) );
+	int i,j,k;
+	int *buf = (int*)malloc(sizeof(int) * (end - begin + 1));
 
-  for( i = low, j = mid + 1, k = 0; i <= mid; ++k){
-    if( j > high) break;
-    if( *(data + i) <= *(data + j) ){
-      *(pTmp + k) = *(data + i);
-      i++;
-    }else{
-      *(pTmp + k) = *(data + j);
-      j++;
-    }
-  }
+	i = begin; 
+	j = mid + 1; 
+	k = 0; 
 
-  if( i <= mid ){
-    memcpy( pTmp + k, data + i, sizeof(int)*(mid-i + 1));
-  }
-  if( j <= high){
-    memcpy( pTmp + k, data + j, sizeof(int)*(high-j +1));
-  }
-  memcpy(data + low, pTmp, sizeof(int)*(high - low +1));
-  if(pTmp) free(pTmp);
+	while (i <= mid || j <= end) {
+		if (a[i] > a[j]) {
+			buf[k] = a[j];
+			k++;
+
+			if (j == end) {
+				memcpy(buf + k, a + i, sizeof(int) * (mid - i + 1));
+				memcpy(a + begin, buf, sizeof(int) * (end - begin + 1));
+				return;
+			}
+
+			j++;
+		} else {
+			buf[k] = a[i];
+			k++;
+
+			if (i == mid) {
+				memcpy(buf + k, a + j, sizeof(int) * (end - j + 1));
+				memcpy(a + begin, buf, sizeof(int) * (end - begin + 1));
+				return;
+			}
+
+			i++;
+		}
+	}
+
+	free(buf);
 }
 
 
 void mergeSort(int *data, int low, int high)
 {
-  if( low < high){
+  if (low < high) {
     int mid = (low + high)/2;
     mergeSort(data, low, mid);
     mergeSort(data, mid + 1, high);
@@ -78,24 +112,23 @@ void mergeSort(int *data, int low, int high)
 }
 
 
-/* for heap sort */
-void maxHeapify(int *data, int i, int size)
+static void maxHeapify(int *data, int i, int size)
 {
   int ln, rn, bign = i;
   ln = 2*i + 1;
   rn = 2*i + 2;
-  if( ln < size ) bign = (*(data + i) > *(data + ln)) ? i:ln;
-  if( rn < size ) bign = (*(data + bign) > *(data + rn)) ? bign:rn;
-  if(bign != i){
+  if (ln < size) bign = (*(data + i) > *(data + ln)) ? i:ln;
+  if (rn < size) bign = (*(data + bign) > *(data + rn)) ? bign:rn;
+  if (bign != i) {
     swap(data + bign, data + i);
     maxHeapify( data, bign, size);
   }
 }
 
-void buildMaxHeap(int *data, int size)
+static void buildMaxHeap(int *data, int size)
 {
   int i;
-  for(i = size/2; i >= 0; --i){
+  for (i = size/2; i >= 0; --i) {
     maxHeapify(data, i, size);
   }
 }
@@ -104,7 +137,7 @@ void heapSort(int *data, int size)
 {
   int i;
   buildMaxHeap(data, size);
-  for(i = size - 1; i >= 0; --i){
+  for (i = size - 1; i >= 0; --i) {
     swap(data, data + i);
     buildMaxHeap(data, i);
   }
