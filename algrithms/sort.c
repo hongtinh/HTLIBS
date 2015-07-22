@@ -10,9 +10,9 @@ static void maxHeapify(int *data, int i, int size);
 
 static void swap(int *a, int *b)
 {
-  int c = *a;
-  *a = *b;
-  *b = c;
+	int c = *a;
+	*a = *b;
+	*b = c;
 }
 
 static int partition(int *a, int begin, int end)
@@ -52,13 +52,13 @@ static int partition(int *a, int begin, int end)
 void quickSort(int* data, int low, int high)
 {
 
-  int mid;
-  if (low < high) {
-    mid = partition(data, low, high);
-    quickSort(data, low, mid);
-    quickSort(data, mid + 1, high);
-  }  
-  
+	int mid;
+	if (low < high) {
+		mid = partition(data, low, high);
+		quickSort(data, low, mid);
+		quickSort(data, mid + 1, high);
+	}  
+
 }
 
 
@@ -103,42 +103,42 @@ static void merge(int *a, int begin, int mid, int end)
 
 void mergeSort(int *data, int low, int high)
 {
-  if (low < high) {
-    int mid = (low + high)/2;
-    mergeSort(data, low, mid);
-    mergeSort(data, mid + 1, high);
-    merge(data, low, mid, high);
-  }
+	if (low < high) {
+		int mid = (low + high)/2;
+		mergeSort(data, low, mid);
+		mergeSort(data, mid + 1, high);
+		merge(data, low, mid, high);
+	}
 }
 
 
 static void maxHeapify(int *data, int i, int size)
 {
-  int ln, rn, bign = i;
-  ln = 2*i + 1;
-  rn = 2*i + 2;
-  if (ln < size) bign = (*(data + i) > *(data + ln)) ? i:ln;
-  if (rn < size) bign = (*(data + bign) > *(data + rn)) ? bign:rn;
-  if (bign != i) {
-    swap(data + bign, data + i);
-    maxHeapify( data, bign, size);
-  }
+	int ln, rn, bign = i;
+	ln = 2*i + 1;
+	rn = 2*i + 2;
+	if (ln < size) bign = (*(data + i) > *(data + ln)) ? i:ln;
+	if (rn < size) bign = (*(data + bign) > *(data + rn)) ? bign:rn;
+	if (bign != i) {
+		swap(data + bign, data + i);
+		maxHeapify( data, bign, size);
+	}
 }
 
 static void buildMaxHeap(int *data, int size)
 {
-  int i;
-  for (i = size/2; i >= 0; --i) {
-    maxHeapify(data, i, size);
-  }
+	int i;
+	for (i = size/2; i >= 0; --i) {
+		maxHeapify(data, i, size);
+	}
 }
 
 void heapSort(int *data, int size)
 {
-  int i;
-  buildMaxHeap(data, size);
-  for (i = size - 1; i >= 0; --i) {
-    swap(data, data + i);
-    buildMaxHeap(data, i);
-  }
+	int i;
+	buildMaxHeap(data, size);
+	for (i = size - 1; i >= 0; --i) {
+		swap(data, data + i);
+		buildMaxHeap(data, i);
+	}
 }
