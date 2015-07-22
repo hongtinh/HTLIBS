@@ -22,7 +22,8 @@ void sort_test()
   printf("\n");
 
   //mergeSort(data, 0, MAX_SIZE -1 );
-  heapSort(data, MAX_SIZE);
+  //heapSort(data, MAX_SIZE);
+	quickSort(data, 0, MAX_SIZE - 1);
   for(i=0; i< MAX_SIZE; i++) 
   {
     printf("%d ", data[i]);
@@ -57,6 +58,7 @@ void tree_test()
 
 int main()
 {
-  tree_test();
+  //tree_test();
+	sort_test();
   return 0;
 }
